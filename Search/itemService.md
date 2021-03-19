@@ -1,4 +1,4 @@
-```
+```java
 
 @Service
 @Transactional // 객체가 사용하는 모든 method에 transaction이 적용된다.
@@ -28,4 +28,4 @@ public class ItemService {
 }
 
 
-```java
+```
