@@ -1,4 +1,4 @@
-```
+```java
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
@@ -13,4 +13,4 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
         List<Item> findByBrandKeyword(@Param("keyword") String keyword);
 }
 
-```java
+```
