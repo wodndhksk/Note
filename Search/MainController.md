@@ -1,4 +1,4 @@
-```
+```java
 @Controller
 @Slf4j
 @RequiredArgsConstructor
@@ -31,4 +31,4 @@ public class MainController {
         return "/view/index";
     }
 
-```java
+```
