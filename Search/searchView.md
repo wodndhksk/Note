@@ -1,4 +1,4 @@
-```
+```html
            <!-- Search bar -->
             <form class="form-inline my-2 my-lg-0" th:action="@{/}" th:method="get">
                 <select id="searchType" name="searchType">
@@ -12,4 +12,4 @@
             </form>
 
 
-```html
+```
