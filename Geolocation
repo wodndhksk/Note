@@ -1,4 +1,4 @@
-```
+```javaScript
 <!DOCTYPE html>
 <html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
@@ -70,4 +70,4 @@
 </script>
 </div>
 </html>
-```javascript
+```
