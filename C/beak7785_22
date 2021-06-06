@@ -1,0 +1,42 @@
+```c
+#include <stdio.h>
+ 
+unsigned char arr[52500000];
+int max = 0;
+ 
+int main(){
+    int N,i;
+    scanf("%d",&N);
+    
+    while(N--){
+        char name[6] = "\0";
+        char inNout[6] = "\0";
+        scanf("%s %s",name,inNout);
+        long long int idx = 0,mul=1;
+        for(i=4;i>=0;i--){
+            if(name[i]>='a'&&name[i]<='z') idx += (name[i]-'a'+27)*mul;
+            else if(name[i]>='A'&&name[i]<='Z')idx += (name[i]-'A'+1)*mul;
+            mul *= 53;
+        }
+        if(idx>max) max = idx;
+        if(inNout[0]=='e'){
+            arr[idx/8] |= 1 << (idx%8);
+        }
+        else arr[idx/8] &= ~(1 << (idx%8));
+    }
+    for(i=max;i>=0;i--){
+        if(arr[i/8] & (1 << i%8)){
+            int idx = i;
+            char out[6];
+            int cur=0;
+            while(idx>0){
+                if(idx%53<27 && idx%53 >0) out[cur++]=idx%53+'A'-1;
+                else if(idx%53>=27) out[cur++] = idx%53+'a'-27;
+                idx /= 53;
+            }
+            for(int t = cur-1 ; t >= 0 ; t--) printf("%c",out[t]);
+            printf("\n");
+        }
+    }
+}
+```
