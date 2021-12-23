@@ -1,4 +1,4 @@
-```javascirpt
+```javascript
 var idx = "";
 
 	function onClickBookList(idxSeq){
