@@ -3,7 +3,7 @@
 <select id="selectList" parameterType="java.util.HashMap" resultType="LoanSignBoardVo">
 		
 	SELECT  
-		LOAN_SEQ_NO, USER_NAME   //GROUP BY 컬럼이랑 일치 시켜야 함 
+		LOAN_SEQ_NO, USER_NAME   <!--GROUP BY 컬럼이랑 일치 시켜야 함 -->
 		FROM 
 			tb_loan_signboard_bnk 
 		WHERE
@@ -12,7 +12,7 @@
 			ALARM_TALK = '1'  AND
 			LOAN_GUBUN = #{loanGubun}
 	GROUP BY
-		LOAN_SEQ_NO, USER_NAME // GROUP BY 조건에 있는 컬럼끼리는 값이 같아야함
+		LOAN_SEQ_NO, USER_NAME  <!-- GROUP BY 조건에 있는 컬럼끼리는 값이 같아야함 -->
 		
 		ORDER BY
 			LOAN_SEQ_NO
