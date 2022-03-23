@@ -20,6 +20,7 @@
 
 	</select>
 
+<!--LOAN_GUBUN, WEB_ID, USER_NAME, USER_TEL, LOAN_SEQ_NO 가 중복일시(GROUP BY) SELECT 는 GROUP BY 조건과 동일, 하지만 다른 조건을 추가하고 싶다면 하나만 가능*(  max(CONTROL_NO) AS CONTROL_NO, max(REG_DT) AS REG_DT  ) 와 같이 max만 가능  --> 
  <select id="selectList" parameterType="java.util.HashMap" resultType="LoanSignBoardVo">
 		SELECT  
 		LOAN_GUBUN, WEB_ID, USER_NAME, USER_TEL, LOAN_SEQ_NO
