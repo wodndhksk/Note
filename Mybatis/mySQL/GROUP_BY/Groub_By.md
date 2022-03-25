@@ -23,7 +23,7 @@
 <!--LOAN_GUBUN, WEB_ID, USER_NAME, USER_TEL, LOAN_SEQ_NO 가 중복일시(GROUP BY) SELECT 는 GROUP BY 조건과 동일, 하지만 다른 조건을 추가하고 싶다면 하나만 가능*(  max(CONTROL_NO) AS CONTROL_NO, max(REG_DT) AS REG_DT  ) 와 같이 max만 가능  --> 
  <select id="selectList" parameterType="java.util.HashMap" resultType="LoanSignBoardVo">
 		SELECT  
-		LOAN_GUBUN, WEB_ID, USER_NAME, USER_TEL, LOAN_SEQ_NO
+		LOAN_GUBUN, WEB_ID, USER_NAME, USER_TEL, LOAN_SEQ_NO	 <!-- max(CONTROL_NO) AS CONTROL_NO 같은 경우 그룹화 된 값들 중 max 값 하나만 선택하여 select 로 보여준 경우 -->
 		, max(CONTROL_NO) AS CONTROL_NO
 		, max(REG_DT) AS REG_DT
 		FROM 
@@ -36,7 +36,7 @@
 			ALARM_TALK is NULL
 			
 		GROUP BY
-			LOAN_GUBUN, WEB_ID, USER_NAME, USER_TEL, LOAN_SEQ_NO
+			LOAN_GUBUN, WEB_ID, USER_NAME, USER_TEL, LOAN_SEQ_NO  <!-- 그룹화 할 컬럼들 (GROUP BY 조건의 컬럼이 같은 값일 시 그룹화 -->
 			
 		ORDER BY
 			LOAN_SEQ_NO
