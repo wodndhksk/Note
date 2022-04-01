@@ -26,6 +26,7 @@ import egovframework.com.admin.book.service.OutBookNewVo;
 import egovframework.com.admin.common.service.CommonApiService;
 import egovframework.com.admin.scheduler.busan.service.impl.ApiDataService;
 import egovframework.com.core.model.Params;
+import egovframework.com.core.model.Record;
 import egovframework.com.core.util.ConvertUtil;
 import egovframework.com.core.util.HttpClient_URL;
 import egovframework.com.core.util.SecurityUtil;
@@ -52,19 +53,27 @@ public class BusanBookNewScheduler {
 	@Autowired
 	private ApiDataService apiDataService;
 
-	@Value("#{application['BUSAN_OUT_BOOK_NEW_URL']}")
 	private String NEW_URL;
 
-	private String SITE_CD ="";
+	@Value("#{application['BUSAN_SITE_CD']}")
+	private String SITE_CD;
 
 	private String SM_PARAM = "";
 
 	@Scheduled(cron = "0 15 * * * * ") // 58 58 8-21 * * *
-//	@Scheduled(fixedDelay=1000000) // Test (10초마다)
+//	@Scheduled(fixedDelay=10000) // Test (10초마다)
 	public void NewBookInfoSchedule() {
 		log.info(">>>>>>>>>>>>>>>>>>>>> BusanNewBookInfoSchedule start");
 		Params params = new Params();
 
+		Params p = new Params();
+		p.put("site_cd", SITE_CD);
+		p.put("code_id", "AT05");
+		List<Record> getBookInfo =bookInfoService.getApiBookInfo(p);
+		
+			
+		NEW_URL = getBookInfo.get(0).get("API_CALL_INFO").toString();
+		
 		UserInfo user = SecurityUtil.getUserInfo();
 
 		List<OutBookNewVo> list = new ArrayList<>();
@@ -107,7 +116,7 @@ public class BusanBookNewScheduler {
 			String a = returnMapTest.get("authors").toString();
 			////////////////////////////////////////////
 			
-			for(int i=0; i<contentList.size(); i++) {
+			for(int i =0; i<contentList.size(); i++) {
 				vo = new OutBookNewVo();
 				returnMap = new HashMap<>();
 				
@@ -127,7 +136,9 @@ public class BusanBookNewScheduler {
 				String title = apiDataService.jsonDateToString(contentList, i ,"title");
 				/////////////////
 				
-				vo.setCallNo(apiDataService.jsonDateToString(contentList, i, "controlNo"));
+				
+				vo.setCallNo(apiDataService.getCallNo(apiDataService.jsonDateToString(contentList, i, "controlNo")));
+				vo.setControlNo(apiDataService.jsonDateToString(contentList, i, "controlNo"));
 				vo.setTitle(apiDataService.jsonDateToString(contentList, i, "title"));
 				vo.setIsbn(isbn);
 				//Bookkey에 API 'id'값 넣음
@@ -143,12 +154,16 @@ public class BusanBookNewScheduler {
 				
 				//isbn값이 있으면
 				if(!"".equals(isbn)) {
-					vo.setAuthor(returnMap.get("authors").toString());
+					vo.setAuthor(apiDataService.replaceKakaoDate(returnMap.get("authors").toString()));
 					vo.setPublisher(returnMap.get("publisher").toString());
 					vo.setPubYear(pubYear);
-					vo.setTranslators(returnMap.get("translators").toString());
+					vo.setTranslators(apiDataService.replaceKakaoDate(returnMap.get("translators").toString()));
 					vo.setDescription(returnMap.get("description").toString());
-					vo.setKakaoImg(returnMap.get("thumbnail").toString());			
+					if("".equals(returnMap.get("thumbnail").toString())){
+						vo.setKakaoImg("/resources/image/busan/book_blank.jpg");	
+					}else {
+						vo.setKakaoImg(returnMap.get("thumbnail").toString());		
+					}		
 				}
 				
 				list.add(vo);			
@@ -220,6 +235,7 @@ public class BusanBookNewScheduler {
 							
 							inputMap.put("id", v.getBookKey());
 							inputMap.put("TB_NAME", "TB_OUT_NEWBOOK");
+							inputMap.put("bkAge", "ADULT");
 							bookInfoService.deleteBook(inputMap);
 
 							/*
@@ -303,10 +319,11 @@ public class BusanBookNewScheduler {
 		}
 		// vo = null;
 
-
+		
 	}
 
 }
+
 
 
 ```
