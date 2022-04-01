@@ -1,4 +1,4 @@
-## 목차버튼 클릭시
+## 버튼 누르면 팝업에 text 내용 표출하기 예시 (목차버튼에 onclick 존재, pupup란 id="bookInfoText" 존재)
 ```html
 
 <div class="button">
@@ -6,8 +6,19 @@
   <a href="/front/busan/book/book_new.do" class="button__block">이전화면</a>
 </div>
 
+<div class="modal" id="modal1">
+	<div class="modal__body">
+		<div class="scrollBlock" id="bookInfoText">
+			<!-- 목차내용란 -->
+		</div>
+		<div class="button">
+			<a href="#" class="button__block button__modalClose on">닫기</a>
+		</div>
+	</div>
+</div>
+
 ```
-## 목차버튼 클릭시 ajax를 통해 청구기호값을 던지고 text data값을 받는다
+## 목차버튼 클릭시 ajax를 통해 청구기호값을 던지고 text data값을 받는다. 그후 목차 내용란 안에 InnerHTML 
 ```javascript
 function bookInfo(controlNo){
 			console.log("클릭!:" + controlNo);
@@ -21,7 +32,7 @@ function bookInfo(controlNo){
 				  success : function(data) {		
 					  console.log("성공");
 					  console.log(data); //json object 확인용	
-					  $("#bookInfoText").html(data);  //////////// Ajax로 Jsp view 
+					  $("#bookInfoText").html(data);  // 
 					  
 				  },		  
 				  error : function(data) {
