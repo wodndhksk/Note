@@ -131,3 +131,20 @@
 		
 	</c:forEach>
 ```
+## Controller
+```java
+	@GetMapping("/signboard.do")
+	@ResponseBody
+	public ModelAndView signboard(HttpServletRequest req, HttpServletResponse res, String loanGubun) throws Exception {
+		
+		ModelAndView mv = new ModelAndView();
+		Map<String, String> params = new HashMap<>();
+		params.put("loanGubun", loanGubun); //층수 구분
+		List<LoanSignBoardVo> board = multiFrontService.selectList(params);	
+		
+		mv.addObject("loanBoard",board);
+		return mv;
+
+	}
+
+```
