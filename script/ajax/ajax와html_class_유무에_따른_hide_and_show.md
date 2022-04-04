@@ -40,7 +40,7 @@
 		  }
 	  });
 ```
-## 온라인 
+## 온라인 열람신청 하위 태그값이 없다면 서고알람신청을 보여준다
 ```html
 		<!-- 온라인 열람신청 알림 -->
 			<div class="notice notice--slider">
@@ -86,4 +86,48 @@
 			</div> 
 			
 			<!-- //서고자료 열람신청 안내 -->
+```
+##  $("#loan_signboard").html(data); 의 data 값
+```html
+<%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+	
+	
+	
+	<c:forEach var="row" items="${loanBoard}" varStatus="rowNum">
+		<c:if test="${rowNum.first }">
+			<div class="list__block swiper-slide">
+			<ul>
+		</c:if>
+				<li>
+					<div class="info">
+						<div class="num">${rowNum.count }</div>
+						
+						<c:set var="nameValue" value="${row.userName }" />
+													
+						<c:if test="${fn:length(row.userName) < 4}"> 
+							<div class="name length4"><div>${fn:substring(row.userName,0, 2) } *</div><sub>님</sub></div>
+						</c:if>
+						<c:if test="${fn:length(row.userName) > 3}"> 
+							<div class="name length4"><div>${fn:substring(row.userName,0, 2) } **</div><sub>님</sub></div>
+						</c:if>
+						<div class="status">Online</div>
+					</div>
+				</li>
+				
+		<c:choose>
+			<c:when test="${rowNum.last }">
+				</ul>
+				</div>
+			</c:when>
+			<c:when test="${rowNum.count % 10 == 0}">
+				</ul>
+				</div>
+				<div class="list__block swiper-slide">
+				<ul>
+			</c:when>
+		</c:choose>	
+		
+	</c:forEach>
 ```
