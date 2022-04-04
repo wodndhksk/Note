@@ -40,3 +40,50 @@
 		  }
 	  });
 ```
+## 온라인 
+```html
+		<!-- 온라인 열람신청 알림 -->
+			<div class="notice notice--slider">
+				<div class="notice__title">
+					<small>Online Application</small>
+					<h2>온라인 열람신청 알림</h2>
+				</div>
+				<div class="notice__list">
+					<div class="list swiper" >
+						<div class="swiper-wrapper" id="loan_signboard"></div>					
+					</div>
+				</div>		
+			</div>
+			<!-- // 온라인 열람신청 알림 -->
+			
+			<!-- 서고자료 열람신청 안내 -->		
+			<div class="notice notice--ma" style="display: none">
+				<div class="notice__title">
+					<small>Library Materials Application</small>
+					<h2>온라인 열람신청 안내</h2>
+				</div>
+				<div class="ma">
+					<div class="ma__block">
+						<div class="ma__contents">
+							<small>Howtoapply</small>
+							<h2>신청방법</h2>
+							<div>
+								당일 17시 이전<br />
+								온라인 신청
+							</div>
+						</div>
+						<div class="ma__contents">
+							<small>Placetoreceiveit</small>
+							<h2>수령장소</h2>
+							<div>
+								2층 주제자료실<br />
+								사서데스크
+								<p>18시 이후는 <br />1층 종합자료실 사서데스크</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div> 
+			
+			<!-- //서고자료 열람신청 안내 -->
+```
