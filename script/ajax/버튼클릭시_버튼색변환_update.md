@@ -5,7 +5,7 @@
    <button class="btn btn-white" id="deleteBtn${row.loanSeqNo }" onclick='deleteBtn("${row.loanSeqNo }")'>삭제</button>
 ```
 
-## 버튼 script
+## 버튼 script (알림톡, 삭제)
 ```javascript
 function deleteBtn(seqNo){
 	$("#deleteBtn" + seqNo).css("background-color", "yellow");
