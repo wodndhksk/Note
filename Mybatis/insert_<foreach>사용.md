@@ -1,4 +1,4 @@
-- private List<CategoryLang> categoryLangs;
+- private List\<CategoryLang\> categoryLangs;
 - 리스트 형태의 categoryLangs 객체를 foreach 로 한번에 여러개 insert
 
 
