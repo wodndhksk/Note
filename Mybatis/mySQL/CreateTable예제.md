@@ -1,4 +1,5 @@
 ## 테이블 생성 샘플
+- 기본키 설정과 외래키 설정도 포함 
 
 ```sql
 create table ht_std_fix_dlv_cost(
