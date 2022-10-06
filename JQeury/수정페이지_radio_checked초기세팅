@@ -1,0 +1,18 @@
+## foreach 안에 foreach를 사용해서 value값이 같은지 확인하는 구조 (때문에 FixedTransFee vo 안에 List 형태(allArea) 의 변수를 생성해서 담음)
+
+```html
+  <li>
+    <span class="ui-rdo">
+      <span class="ui-chk">
+      <c:forEach var="data" items="${centerCdOthers}" varStatus="i">
+        <input id="otherArea${data.codeDtlNo}" name="otherArea" onclick="areaCheckBoxValidation()" type="checkbox" value="${data.codeDtlNo}"
+          <c:forEach var="center" items="${fixedTransFee.allArea}" varStatus="j">
+            <c:if test="${center eq data.codeDtlNo}"> checked </c:if>
+          </c:forEach>
+        >
+        <label for="otherArea${data.codeDtlNo}" style="margin-right: 10px;">${data.codeDtlNameKo}</label>
+      </c:forEach>
+      </span>
+    </span>
+  </li>
+```
