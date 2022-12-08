@@ -1,6 +1,6 @@
 ## STORE
 
-```vue
+```javascript
 const MODULE_NAME = 'deliveryAgencyReqStore'
 
 const TYPES = {
