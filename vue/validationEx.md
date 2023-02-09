@@ -8,7 +8,7 @@
         <dd>{{ $t('ML60510') }}: {{ buyerInfo.reqDate }}</dd>
         <dd class="towner">
           {{ $t('ML60511') }} : <span class="badge19">
-            <span :class="['badge', `flag-${buyerData.buyer.flag}`]">{{ buyerInfo.custNm }}</span>
+            <span :class="['badge', `flag-${buyerInfo.flag}`]">{{ buyerInfo.custNm }}</span>
           </span>
         </dd>
       </dl>
@@ -245,7 +245,7 @@
             <dt>{{ $t('ML60523') }}</dt>
             <dd class="">
               {{ reqInfo[i].itemPrice }} <em>{{ curUnitCdAll.curUnitCd }}</em>
-              <span>({{ buyerData.totalPrice.usd }} USD)</span>
+              <span>({{ 0 }} USD)</span>
             </dd>
           </dl>
         </div>
@@ -281,7 +281,6 @@
 
 <script>
 import { useStore } from 'vuex'
-import { orderDeliveryDetailBuyerData } from '@constants/dummyData.js'
 import CompButtonWrap from '@comp/common/ButtonWrap'
 import CompButton from '@comp/common/Button'
 import CompInput from '@comp/common/Input/Input'
@@ -312,32 +311,29 @@ export default {
     const userInfo = computed(() => store.state.memberStore.userInfo) || ''
     const passedSlideOptions = store.state.temp[store.state.temp.length - 1]?.options
     const globalFnc = getCurrentInstance().appContext.config.globalProperties
-    // 로그인한 회원 custAuto 값
-    const loginCustAutoSn = ref(isLogin() ? store.state.memberStore.userInfo.custAutoSn : false)
 
-
-
+    // isError노출 = true (픽업 예약 버튼 클릭시 true로 바뀌면서 isError 활성화 조건으로 사용)
+    const validation = ref(false)
     const shopMallUseYn = ref({ yn: false })
-    // 테스트 값
+    // 알림 메시지
+    const SUCCESS_MSG = `주문번호 [${passedSlideOptions?.reqNo}] 의 배송신청이 완료되었습니다. `
+    const FAIL_MSG = '배송신청이 완료되지 못했습니다.'
+    const VALIDATION_MSG = `${FAIL_MSG} 필수값을 입력(선택)해주세요`
+    const VALIDATION_SELECT_OPTION_MSG = '선택해주세요'
+    const VALIDATION_INPUT_MSG = '입력해주세요'
+
+    // 세팅 값
     const buyerInfo = ref({
-      reqNo: '202211160445073900',
-      custPoBoxNo: 'P4C522',
+      reqNo: '202211160445073900', // (주문번호) 이전페이지에서 넘겨준 값을 받아야 함 passedSlideOptions?.reqNo
+      custPoBoxNo: 'P4C522', // userInfo.value.poBoxNo
       shopmallUrlAutoSn: '',
       shopmallUrl: '',
 
-      center: '1000',
-      reqDate: '2023.02.07',
-      custNm: '테스트맨'
+      centerAutoSn: '1000', // (센터값) 이전페이지에서 넘겨준 값을 받아야 함 passedSlideOptions?.centerAutoSn
+      reqDate: '2023.02.07', // (주문일자) 이전페이지에서 넘겨준 값을 받아야 함 passedSlideOptions?.reqDate
+      flag: store.state.memberStore.userInfo.custCountryCd.toLowerCase(),
+      custNm: store.state.memberStore.userInfo.nickname
     })
-
-    // const buyerInfo = ref({
-    //   center: '1000',
-    //   reqNo: passedSlideOptions?.reqNo,
-    //   reqDate: '2023.02.07',
-    //   custNm: '테스트맨',
-    //   custPoBoxNo: userInfo.value.poBoxNo
-    //   custAutoSn:loginCustAutoSn.value
-    // })
 
     // 통화 단위 (모든 상품 공통)
     const curUnitCdAll = ref({ curUnitCd: '' })
@@ -369,8 +365,6 @@ export default {
 
     // 카테고리 select option 리스트 호출값
     const categoryOptList = computed(() => store.getters['deliveryAgencyStore/getComodityCatAutoSn'])
-    // 품목 select option 리스트 호출값
-    // const comodityOptList = computed(() => store.getters['deliveryAgencyStore/getComodityAutoSn'])
     // 쇼핑몰 select option 리스트 호출값
     const shopMallOptList = computed(() => store.getters['deliveryAgencyStore/getShopMallUrlAutoSn'])
     // 운송사 select option 리스트 호출값
@@ -383,9 +377,9 @@ export default {
     // 카테고리 호출
     store.dispatch('deliveryAgencyStore/fetchComodityCatAutoSn')
     // 쇼핑몰 URL 호출
-    store.dispatch('deliveryAgencyStore/fetchShopMallUrlAutoSn', { centerAutoSn: buyerInfo.value.center })
+    store.dispatch('deliveryAgencyStore/fetchShopMallUrlAutoSn', { centerAutoSn: buyerInfo.value.centerAutoSn })
     // 운송사 호출
-    store.dispatch('deliveryAgencyStore/fetchHdsAutoSn', { centerAutoSn: buyerInfo.value.center })
+    store.dispatch('deliveryAgencyStore/fetchHdsAutoSn', { centerAutoSn: buyerInfo.value.centerAutoSn })
     // 통화단위 호출
     store.dispatch('deliveryAgencyStore/fetchCurUnitcd') // 통화단위 action
 
@@ -538,7 +532,7 @@ export default {
       validation.value = true // isError 노출 조건 true
       // 검증
       if(validationCheck()) {
-        return alert('필수값을 입력해주세요')
+        return alert(VALIDATION_MSG)
       }
       // req 데이터
       const payload = {
@@ -553,6 +547,11 @@ export default {
         .then(res => {
           if (res.status === API_RESULT_STATUS.SUCCESS) {
             console.log('배송완료 결과:', res)
+            alert(SUCCESS_MSG)
+          }
+        }).catch((e) => {
+          if(e.status === API_RESULT_STATUS.ERROR) {
+            return alert(`${FAIL_MSG} ${e.data.message}`)
           }
         })
     }
@@ -563,26 +562,7 @@ export default {
     }
 
 
-    // const reqInfo = ref([{
-    //   hdsAutoSn: '',
-    //   dlvTrackNo: '',
-    //   comodityCatAutoSn: '',
-    //   comodityAutoSn: '',
-    //   prdtBrandNm: '',
-    //   prdtNm: '',
-    //   prdtAmt: '',
-    //   curUnitCd: '',
-    //   prdtCnt: 0,
-    //   shopmallOrdNoInfo: '',
-    //   prdtColorInfo: '',
-    //   prdtSizeInfo: '',
-    //   prdtDtlUrl: '',
-    //   itemPrice: 0
-    // }])
-
-    // isError노출 = true (픽업 예약 버튼 클릭시 true로 바뀌면서 isError 활성화 조건으로 사용)
-    const validation = ref(false)
-
+    // validation 처리
     const validationReturnInfo = reactive({
       shopmallUrlAutoSn: computed(() => {
         if(globalFnc.$isNull(buyerInfo.value.shopmallUrlAutoSn) && validation.value) {
@@ -602,7 +582,7 @@ export default {
         let errorArr = []
         const infoArr = reqInfo.value
         for(const i in infoArr) {
-          errorArr = errorValidationFunc(infoArr[i].hdsAutoSn, errorArr, '선택해주세요')
+          errorArr = errorValidationFunc(infoArr[i].hdsAutoSn, errorArr, VALIDATION_SELECT_OPTION_MSG)
         }
         return errorArr
       }),
@@ -611,7 +591,7 @@ export default {
         let errorArr = []
         const infoArr = reqInfo.value
         for(const i in infoArr) {
-          errorArr = errorValidationFunc(infoArr[i].dlvTrackNo, errorArr, '입력해주세요')
+          errorArr = errorValidationFunc(infoArr[i].dlvTrackNo, errorArr, VALIDATION_INPUT_MSG)
         }
         return errorArr
       }),
@@ -620,7 +600,7 @@ export default {
         let errorArr = []
         const infoArr = reqInfo.value
         for(const i in infoArr) {
-          errorArr = errorValidationFunc(infoArr[i].comodityCatAutoSn, errorArr, '선택해주세요')
+          errorArr = errorValidationFunc(infoArr[i].comodityCatAutoSn, errorArr, VALIDATION_SELECT_OPTION_MSG)
         }
         return errorArr
       }),
@@ -629,7 +609,7 @@ export default {
         let errorArr = []
         const infoArr = reqInfo.value
         for(const i in infoArr) {
-          errorArr = errorValidationFunc(infoArr[i].comodityAutoSn, errorArr, '선택해주세요')
+          errorArr = errorValidationFunc(infoArr[i].comodityAutoSn, errorArr, VALIDATION_SELECT_OPTION_MSG)
         }
         return errorArr
       }),
@@ -638,7 +618,7 @@ export default {
         let errorArr = []
         const infoArr = reqInfo.value
         for(const i in infoArr) {
-          errorArr = errorValidationFunc(infoArr[i].prdtBrandNm, errorArr, '입력해주세요')
+          errorArr = errorValidationFunc(infoArr[i].prdtBrandNm, errorArr, VALIDATION_INPUT_MSG)
         }
         return errorArr
       }),
@@ -647,7 +627,7 @@ export default {
         let errorArr = []
         const infoArr = reqInfo.value
         for(const i in infoArr) {
-          errorArr = errorValidationFunc(infoArr[i].prdtNm, errorArr, '입력해주세요')
+          errorArr = errorValidationFunc(infoArr[i].prdtNm, errorArr, VALIDATION_INPUT_MSG)
         }
         return errorArr
       }),
@@ -656,7 +636,7 @@ export default {
         let errorArr = []
         const infoArr = reqInfo.value
         for(const i in infoArr) {
-          errorArr = errorValidationFunc(infoArr[i].prdtAmt, errorArr, '입력해주세요')
+          errorArr = errorValidationFunc(infoArr[i].prdtAmt, errorArr, VALIDATION_INPUT_MSG)
         }
         return errorArr
       }),
@@ -665,7 +645,7 @@ export default {
         let errorArr = []
         const infoArr = reqInfo.value
         for(const i in infoArr) {
-          errorArr = errorValidationFunc(infoArr[i].curUnitCd, errorArr, '선택해주세요')
+          errorArr = errorValidationFunc(infoArr[i].curUnitCd, errorArr, VALIDATION_SELECT_OPTION_MSG)
         }
         return errorArr
       })
@@ -689,12 +669,11 @@ export default {
       const strObj = validationReturnInfo
 
       const strArr = Object.keys(strObj).map(item => {
-        console.log('strObj[item].isArray', strObj[item])
         // 만약 validationReturnInfo key 의 value가 배열이라면
         if(Array.isArray(strObj[item])) {
           for(const i in strObj[item]) {
             result = !!strObj[item][i].isError
-            console.log('>>>>result', result)
+            // console.log('>>>>result', result)
           }
           return result
         }
@@ -716,7 +695,6 @@ export default {
       validationReturnInfo,
 
       categoryOptList,
-      // comodityOptList,
       shopMallOptList,
       hdsAutoSnOptList,
       curUnitCdList,
@@ -744,67 +722,13 @@ export default {
       reqPrdt
     }
   },
-  data() {
-    return {
-      buyerData: orderDeliveryDetailBuyerData,
-      shoppingMallUrl: '',
-      shoppingMallUrlOptionList: [
-        { title: '직집입력' },
-        { title: 'https://www.gmarket.com/' },
-        { title: 'https://www.11st.com/' },
-        { title: 'https://www.amazon.com/' }
-      ],
-      forwardingAgent: '',
-      forwardingAgentOptionList: [
-        { title: '운송사 선택' },
-        { title: '운송사1' },
-        { title: '운송사2' }
-      ],
-      category: '',
-      categoryOptionList: [
-        { title: '카테고리' },
-        { title: '카테고리1' },
-        { title: '카테고리2' }
-      ],
-      item: '',
-      itemOptionList: [
-        { id: '1', title: '품목' },
-        { id: '2', title: '품목1' },
-        { id: '3', title: '품목2' }
-      ]
-    }
-  },
   mounted() {
     this.$updateSlideOptions({
       // 다국어: 중복
       title: 'PL00146'
     })
-  },
-  methods: {
-    handleButtonClick(value) {
-      console.log({ value })
-    },
-    handleShoppingMallUrlOptionClick(option) {
-      if (this.shoppingMallUrlOptionList[0].title !== option.title) {
-        this.shoppingMallUrl = option.title
-      } else {
-        this.shoppingMallUrl = ''
-      }
-    },
-    handleForwardingAgentOptionClick(option) {
-      if (this.forwardingAgentOptionList[0].title !== option.title) {
-        this.forwardingAgent = option.title
-      } else {
-        this.forwardingAgent = ''
-      }
-    },
-    handleCategoryOptionClick(option) {
-      this.category = option.title
-    },
-    handleItemOptionClick(option) {
-      this.item = option.title
-    }
   }
+
 }
 </script>
 
