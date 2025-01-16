@@ -1,0 +1,15 @@
+'''xml
+<choose>
+            <when test="svmnTypes.size > 0 and svmnTypes != null">
+\--                 AND CD.RSV\_1\_VAL  in ('01', '04')
+                AND CD.RSV\_1\_VAL  in
+                <foreach item="item" index="index" collection="svmnTypes" open="(" separator="," close=")">
+                   #{item}
+                </foreach>
+            </when>
+            <otherwise>
+                AND CD.RSV\_1\_VAL  = #{svmnType}
+            </otherwise>
+        </choose>
+
+'''
